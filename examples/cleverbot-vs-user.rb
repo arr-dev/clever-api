@@ -1,5 +1,5 @@
 require 'bundler/setup'
-require 'cleverbot-api'
+require 'clever-api'
 
 bot = CleverBot.new
 

@@ -2,8 +2,9 @@ require 'rest-client'
 require 'digest/md5'
 
 class CleverBot
+  BASE_URI = 'http://www.cleverbot.com'
   def initialize
-    @service_uri = 'http://www.cleverbot.com/webservicemin'
+    @service_uri = BASE_URI + '/webservicemin'
     @post_params = {
       start: 'y',
       icognoid: 'wsf',
@@ -13,6 +14,8 @@ class CleverBot
       cleanslate: 'false'
     }
     @backlog = []
+
+    set_session_cookie
   end
 
   def think thought
@@ -37,7 +40,7 @@ class CleverBot
 
   def make_request
     query_string = build_query
-    result = RestClient.post @service_uri, query_string
+    result = RestClient.post @service_uri, query_string, { cookies: @cookies }
     return result.body.split "\r"
   end
 
@@ -68,6 +71,10 @@ class CleverBot
     }.each_pair do |key, value|
       @post_params[key] = response[value]
     end
+  end
+
+  def set_session_cookie
+    @cookies = RestClient.get(BASE_URI).cookies
   end
 end
 
